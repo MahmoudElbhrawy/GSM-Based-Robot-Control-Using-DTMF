@@ -20,6 +20,7 @@ String dtmf_cmd;
 boolean is_call = false;
 
 void setup() {
+  // Set motor pins as outputs
   pinMode(MOTOR1_PIN1, OUTPUT);
   pinMode(MOTOR1_PIN2, OUTPUT);
   pinMode(MOTOR2_PIN1, OUTPUT);
@@ -33,19 +34,22 @@ void setup() {
   Serial.println("Begin serial communication with (SIM800L)");
   delay(7000);
 
-  SIM800L.println("AT"); // Send AT
+  // Initialize SIM800L
+  SIM800L.println("AT"); // Send AT command
   delay(500);
 
+  // Enable DTMF
   SIM800L.println("AT+DDET=1,0,0,0"); // Enable DTMF
   delay(500);
 }
 
 void loop() {
+  // Check for incoming data from SIM800L
   while (SIM800L.available()) {
     buff = SIM800L.readString();
     Serial.println(buff);
 
-    if (is_call == true) {
+    if (is_call) {
       int index = buff.indexOf("+DTMF:");
       if (index > -1) {
         index = buff.indexOf(":");
@@ -66,24 +70,31 @@ void loop() {
     }
   }
 
+  // Forward data from Serial Monitor to SIM800L
   while (Serial.available()) {
     SIM800L.println(Serial.readString());
   }
 }
 
 void doAction() {
-  if (dtmf_cmd == "1") { // Use double quotes for string comparison
+  // Perform action based on DTMF command
+  if (dtmf_cmd == "1") {
     controlMotor(1, true);
     controlMotor(2, true);
     Serial.println("Move Forward");
-  } else if (dtmf_cmd == "2") { // Use double quotes for string comparison
+  } else if (dtmf_cmd == "2") {
     controlMotor(1, false);
     controlMotor(2, false);
     Serial.println("Move Backward");
+  } else if (dtmf_cmd == "0") {
+    controlMotor(1, true);
+    controlMotor(2, false);
+    Serial.println("Motors Stop");
   }
 }
 
 void controlMotor(int motor, bool state) {
+  // Control motor direction based on state
   switch (motor) {
     case 1:
       digitalWrite(MOTOR1_PIN1, state ? HIGH : LOW);
