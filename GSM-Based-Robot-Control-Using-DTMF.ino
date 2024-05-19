@@ -38,7 +38,10 @@ void setup() {
   SIM800L.println("AT"); // Send AT command
   delay(500);
 
-  // Enable DTMF
+  /*
+   +DDET: <mode>,<interval>,<reportMode>,<ssdet>
+   +DDET: (0,1),(0-10000),(0,1),(0,1)
+  */
   SIM800L.println("AT+DDET=1,0,0,0"); // Enable DTMF
   delay(500);
 }
