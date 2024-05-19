@@ -90,8 +90,7 @@ void doAction() {
     controlMotor(2, false);
     Serial.println("Move Backward");
   } else if (dtmf_cmd == "0") {
-    controlMotor(1, true);
-    controlMotor(2, false);
+    stopMotors();
     Serial.println("Motors Stop");
   }
 }
@@ -110,4 +109,12 @@ void controlMotor(int motor, bool state) {
     default:
       break;
   }
+}
+
+void stopMotors() {
+  // Stop both motors
+  digitalWrite(MOTOR1_PIN1, LOW);
+  digitalWrite(MOTOR1_PIN2, LOW);
+  digitalWrite(MOTOR2_PIN1, LOW);
+  digitalWrite(MOTOR2_PIN2, LOW);
 }
